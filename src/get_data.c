@@ -18,6 +18,23 @@ void    get_string(pid_t pid, unsigned long addr, char *buffer)
     buffer[63] = 0;
 }
 
+int     get_array(pid_t pid, unsigned long addr, long *addr_array)
+{
+    long    ret;
+    int     i, j = 0;
+
+    while (i < 64 * sizeof(long))
+    {
+        ret = ptrace(PTRACE_PEEKDATA, pid, addr + i, NULL);
+        addr_array[j++] = ret;
+        if (ret == 0)
+            break;
+        i += sizeof(long);
+    }
+    addr_array[j] = 0;
+    return j;
+}
+
 long    get_reg(pid_t pid, int reg_offset)
 {
     return ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * reg_offset, NULL);

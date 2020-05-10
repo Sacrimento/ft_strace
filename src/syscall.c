@@ -63,7 +63,7 @@ t_syscall_info get_syscall_info(int id)
         {"clone", 5, {ULONG, ULONG, ADDR, ADDR, UINT}, LONG},
         {"fork", 0, {}, LONG},
         {"vfork", 0, {}, LONG},
-        {"execve", 3, {STRING, STRING, STRING}, LONG},
+        {"execve", 3, {STRING, STRING_ARRAY, STRING_ARRAY}, LONG},
         {"exit", 1, {INT}, LONG},
         {"wait4", 4, {ADDR, INT, INT, ADDR}, LONG},
         {"kill", 2, {ADDR, INT}, LONG},

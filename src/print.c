@@ -12,6 +12,27 @@ void    print_string(pid_t pid, unsigned long addr)
         printf("...");
 }
 
+void    print_string_array(pid_t pid, unsigned long addr)
+{
+    unsigned long   addr_array[64];
+    int             i = 0;
+    int             len;
+
+    len = get_array(pid, addr, addr_array);
+
+    //putchar('c');
+    if (len > 8)
+        printf("/* %d vars */", len);
+    else
+        while (addr_array[i] != 0)
+        {
+            print_string(pid, addr_array[i]);
+            if (addr_array[i++ + 1] != 0)
+                printf(", ");
+        }
+    //putchar('c');
+}
+
 void    convert_and_print_arg(pid_t pid, long arg, t_arg_type type)
 {
     switch (type)
@@ -28,6 +49,8 @@ void    convert_and_print_arg(pid_t pid, long arg, t_arg_type type)
             printf("%p", (void *)arg); break;
         case STRING:
             print_string(pid, (unsigned long)arg); break;
+        case STRING_ARRAY:
+            print_string_array(pid, (unsigned long)arg); break;
         default: break;
     }
 }

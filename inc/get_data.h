@@ -15,5 +15,6 @@ typedef struct  s_syscall_data
 t_syscall_data get_syscall_data(pid_t pid);
 long get_syscall_ret(pid_t pid);
 void get_string(pid_t pid, unsigned long addr, char *buffer);
+int get_array(pid_t pid, unsigned long addr, long *addr_array);
 
 #endif
