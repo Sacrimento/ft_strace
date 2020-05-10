@@ -20,17 +20,17 @@ void    print_string_array(pid_t pid, unsigned long addr)
 
     len = get_array(pid, addr, addr_array);
 
-    //putchar('c');
     if (len > 8)
         printf("/* %d vars */", len);
     else
+    {
         while (addr_array[i] != 0)
         {
             print_string(pid, addr_array[i]);
-            if (addr_array[i++ + 1] != 0)
+            if (addr_array[++i] != 0)
                 printf(", ");
         }
-    //putchar('c');
+    }
 }
 
 void    convert_and_print_arg(pid_t pid, long arg, t_arg_type type)
@@ -50,7 +50,9 @@ void    convert_and_print_arg(pid_t pid, long arg, t_arg_type type)
         case STRING:
             print_string(pid, (unsigned long)arg); break;
         case STRING_ARRAY:
-            print_string_array(pid, (unsigned long)arg); break;
+            printf("[");
+            print_string_array(pid, (unsigned long)arg);
+            printf("]"); break;
         default: break;
     }
 }
