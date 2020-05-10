@@ -21,12 +21,9 @@ void    handle_syscall(pid_t pid, int *in_syscall)
 
     *in_syscall ^= 1;
     if (*in_syscall)
-    {
-        data = get_syscall_data(pid);
-        printf("%s()", data.info.name);
-    }
+        print_syscall_data(pid, get_syscall_data(pid));
     else
-        printf(" = %ld\n", get_syscall_ret(pid));
+        print_syscall_ret(get_syscall_ret(pid));
 }
 
 int trace_child(t_opts *opts, pid_t pid)

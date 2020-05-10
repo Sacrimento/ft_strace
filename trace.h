@@ -11,6 +11,7 @@
 
 #include "opt_parser.h"
 #include "get_data.h"
+#include "print.h"
 
 #define SYSCALL_BIT 0x80
 

@@ -1,5 +1,23 @@
 #include "get_data.h"
 
+void    get_string(pid_t pid, unsigned long addr, char *buffer)
+{
+    long    ret;
+    int     i = 0;
+
+    bzero(buffer, 64);
+    while (i < 64)
+    {
+        ret = ptrace(PTRACE_PEEKDATA, pid, addr + i, NULL);
+        memcpy(buffer + i, &ret, sizeof(long));
+        if (memchr(&ret, 0, sizeof(long)))
+            break;
+        i += sizeof(long);
+    }
+
+    buffer[63] = 0;
+}
+
 long    get_reg(pid_t pid, int reg_offset)
 {
     return ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * reg_offset, NULL);
