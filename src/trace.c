@@ -8,7 +8,7 @@ t_stop_type get_next_sigstop(pid_t pid, int *status)
     if (WIFSTOPPED(*status))
     {
         if (WSTOPSIG(*status) & SYSCALL_BIT)
-            return SYSCALL_;
+            return SYSCALL;
         return SIGNAL;
     }
     if (WIFEXITED(*status))
@@ -38,7 +38,7 @@ int trace_child(t_opts *opts, pid_t pid)
     while (1)
     {
         sigstop = get_next_sigstop(pid, &status);
-        if (sigstop == SYSCALL_)
+        if (sigstop == SYSCALL)
             handle_syscall(pid, &in_syscall);
         else if (sigstop == SIGNAL)
             printf("SIGNAL\n");

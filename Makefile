@@ -10,14 +10,16 @@ HEADERS		=	get_data.h \
 				opt_parser.h.h \
 				print.h \
 				syscall.h \
-				trace.h
+				trace.h \
+				resolve_path.h
 
 SRC			=	ft_strace.c \
 				trace.c \
 				opt_parser.c \
 				print.c \
 				syscall.c \
-				get_data.c
+				get_data.c \
+				resolve_path.c
 
 INC_PATH 	= 	$(addprefix $(DIR_INC), $(HEADERS))
 

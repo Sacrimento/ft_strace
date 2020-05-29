@@ -3,6 +3,8 @@
 
 typedef struct s_syscall_data t_syscall_data;
 
+#include <ctype.h>
+
 #include "get_data.h"
 
 void    print_syscall_data(pid_t pid, t_syscall_data syscall);

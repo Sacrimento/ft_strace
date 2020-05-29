@@ -6,6 +6,14 @@ void    print_string(pid_t pid, unsigned long addr)
 
     get_string(pid, addr, str);
 
+    // for (int i = 0; i < 32 && str[i] != 0; ++i)
+    // {
+    //     if (isprint(str[i]))
+    //         printf("%c", str[i]);
+    //     else
+    //         printf("\\%o", str[i]);
+    // }
+
     printf("\"%.32s\"", str);
 
     if (strlen(str) > 32)

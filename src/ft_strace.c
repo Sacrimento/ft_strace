@@ -1,5 +1,6 @@
 #include "opt_parser.h"
 #include "trace.h"
+#include "resolve_path.h"
 
 int usage(void)
 {
@@ -9,6 +10,8 @@ int usage(void)
 
 int exec_child(t_opts *opts)
 {
+    opts->exec_path = resolve_path(opts->exec_path);
+
     ptrace(PTRACE_TRACEME, getpid(), NULL, NULL);
     kill(getpid(), SIGSTOP);
     execvp(opts->exec_path, opts->exec_args);

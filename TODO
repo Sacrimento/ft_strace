@@ -1,0 +1,11 @@
+SYSCALL
+Escape chars
+trunc filenames
+return values in correct fmt
+errno ret
+
+OPTS
+resolve path
+
+SIGNAL
+everything

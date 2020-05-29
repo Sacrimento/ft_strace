@@ -17,7 +17,7 @@
 
 typedef enum    e_stop_type
 {
-    SYSCALL_,
+    SYSCALL,
     SIGNAL,
     EXITED,
 }               t_stop_type;
