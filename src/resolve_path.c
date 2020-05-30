@@ -14,6 +14,17 @@ char    *get_next_path(char *env_path, int offset)
     return (env_path[offset] ? &env_path[offset] : NULL);
 }
 
+int     check_abs_rel(char *cmd)
+{
+    struct stat buffer;
+    
+    if ((cmd[0] == '/' || (strlen(cmd) > 2 && cmd[0] == '.' && cmd[1] == '/'))
+            && stat(cmd, &buffer) == 0)
+        return 1;
+
+    return 0;
+}
+
 char    *resolve_path(char *cmd)
 {
     char        *env_path;
@@ -21,6 +32,9 @@ char    *resolve_path(char *cmd)
     char        *resolved;
     int         i = 0;
     struct stat buffer;
+
+    if (check_abs_rel(cmd))
+        return cmd;
 
     if (!(env_path = strdup(getenv("PATH"))))
         exit(0);
@@ -46,5 +60,5 @@ char    *resolve_path(char *cmd)
 
     free(env_path);
     free(resolved);
-    return cmd;
+    return NULL;
 }

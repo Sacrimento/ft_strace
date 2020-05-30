@@ -8,18 +8,19 @@ int usage(void)
     return 1;
 }
 
+int fatal(const char *strerr, t_opts *opts, int ret)
+{
+    return ret;
+}
+
 int exec_child(t_opts *opts)
 {
-    opts->exec_path = resolve_path(opts->exec_path);
+    if (!(opts->exec_path = resolve_path(opts->exec_path)))
+        return fatal("can't stat", opts, 1);
 
     ptrace(PTRACE_TRACEME, getpid(), NULL, NULL);
     kill(getpid(), SIGSTOP);
-    execvp(opts->exec_path, opts->exec_args);
-}
-
-int __exit(t_opts *opts, int ret)
-{
-    return ret;
+    execv(opts->exec_path, opts->exec_args);
 }
 
 int run(t_opts *opts)
@@ -27,7 +28,7 @@ int run(t_opts *opts)
     pid_t pid = fork();
 
     if (pid == -1)
-        return __exit(opts, 1);
+        return fatal("pid error", opts, 1);
     if (pid == 0)
         return exec_child(opts);
     return trace_child(opts, pid);
