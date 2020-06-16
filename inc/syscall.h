@@ -10,6 +10,8 @@ typedef enum arg_type
     LONG,
     ULONG,
     STRING,
+    SIZED_STRING,
+    FILENAME,
     STRING_ARRAY,
     ADDR
 }           t_arg_type;

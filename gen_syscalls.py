@@ -20,6 +20,8 @@ with open('./syscall', 'w') as f:
                 syscall[1+i] = 'ULONG'
             elif 'long' in arg:
                 syscall[1+i] = 'LONG'
+            elif 'filename' in arg:
+                syscall[1+i] = 'FILENAME'
             elif 'char *' in arg and '[]' in arg:
                 syscall[1+i] = 'STRING_ARRAY'
             elif 'char *' in arg:

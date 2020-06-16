@@ -1,21 +1,26 @@
 #include "get_data.h"
 
-void    get_string(pid_t pid, unsigned long addr, char *buffer)
+void    get_string(pid_t pid, unsigned long addr, char *buffer, size_t size)
 {
     long    ret;
     int     i = 0;
 
-    bzero(buffer, 64);
-    while (i < 64)
+    bzero(buffer, MAX_STRING_PEEK);
+    while ((size && i < size) || (!size && i < MAX_STRING_PEEK - 1))
     {
+        if (size)
+            printf("I WAS HERE\n");
         ret = ptrace(PTRACE_PEEKDATA, pid, addr + i, NULL);
         memcpy(buffer + i, &ret, sizeof(long));
-        if (memchr(&ret, 0, sizeof(long)))
+        if (!size && memchr(&ret, 0, sizeof(long)))
             break;
         i += sizeof(long);
     }
-
-    buffer[63] = 0;
+    if (size)
+    {
+        printf("%d%d", buffer[0], size);
+        exit(0);
+    }
 }
 
 int     get_array(pid_t pid, unsigned long addr, long *addr_array)

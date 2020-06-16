@@ -1,22 +1,32 @@
 #include "print.h"
 
-void    print_string(pid_t pid, unsigned long addr)
+void    print_string(pid_t pid, unsigned long addr, int is_filename, size_t size)
 {
-    char    str[64];
+    static char *non_printable[7] = {"\\a", "\\b", "\\t", "\\n", "\\v", "\\f", "\\r"};
+    char    str[MAX_STRING_PEEK];
 
-    get_string(pid, addr, str);
+    if (size)
+        size = (size > 32 ? 32 : size + (sizeof(long) - size % sizeof(long)));
+    get_string(pid, addr, str, size);
 
-    // for (int i = 0; i < 32 && str[i] != 0; ++i)
-    // {
-    //     if (isprint(str[i]))
-    //         printf("%c", str[i]);
-    //     else
-    //         printf("\\%o", str[i]);
-    // }
+    printf("\"");
+    if (is_filename)
+        printf("%s", str);
+    else
+        for (int i = 0; (!size && i < MAX_STRING_SIZE && str[i] != 0) || (size && i < size); ++i)
+        {
+            if (str[i] > 6 && str[i] < 14)
+                printf("%s", non_printable[str[i] - 7]);
+            else if (isprint(str[i]))
+                printf("%c", str[i]);
+            else
+                printf("%d\\%o", str[i], str[i]);
+        }
+    printf("\"");
 
-    printf("\"%.32s\"", str);
+    // printf((is_filename ? "\"%s\"" : "\"%.32s\""), str);
 
-    if (strlen(str) > 32)
+    if (size || (!is_filename && strlen(str) > 32))
         printf("...");
 }
 
@@ -34,16 +44,18 @@ void    print_string_array(pid_t pid, unsigned long addr)
     {
         while (addr_array[i] != 0)
         {
-            print_string(pid, addr_array[i]);
+            print_string(pid, addr_array[i], 0, 0);
             if (addr_array[++i] != 0)
                 printf(", ");
         }
     }
 }
 
-void    convert_and_print_arg(pid_t pid, long arg, t_arg_type type)
+void    convert_and_print_arg(pid_t pid, t_syscall_data syscall, int arg_index)
 {
-    switch (type)
+    long    arg = syscall.args[arg_index];
+
+    switch (syscall.info.arg_types[arg_index])
     {
         case INT:
             printf("%d", (int)arg); break;
@@ -55,8 +67,12 @@ void    convert_and_print_arg(pid_t pid, long arg, t_arg_type type)
             printf("%lu", (unsigned long)arg); break;
         case ADDR:
             printf("%p", (void *)arg); break;
+        case FILENAME:
+            print_string(pid, (unsigned long)arg, 1, 0); break;
         case STRING:
-            print_string(pid, (unsigned long)arg); break;
+            print_string(pid, (unsigned long)arg, 0, 0); break;
+        case SIZED_STRING:
+            print_string(pid, (unsigned long)arg, 0, (size_t)syscall.args[arg_index + 1]); break;
         case STRING_ARRAY:
             printf("[");
             print_string_array(pid, (unsigned long)arg);
@@ -71,7 +87,7 @@ void    print_syscall_data(pid_t pid, t_syscall_data syscall)
 
     for (int i = 0; i < syscall.info.argc; i++)
     {
-        convert_and_print_arg(pid, syscall.args[i], syscall.info.arg_types[i]);
+        convert_and_print_arg(pid, syscall, i);
         if (i + 1 < syscall.info.argc)
             printf(", ");
     }
