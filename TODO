@@ -2,7 +2,6 @@ SYSCALL
 Escape chars
 return values in correct fmt
 errno ret
-padding
 
 SIGNAL
 everything
