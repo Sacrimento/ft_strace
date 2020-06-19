@@ -3,7 +3,7 @@
 void    print_string(pid_t pid, unsigned long addr, int is_filename, size_t size)
 {
     static char *non_printable[7] = {"\\a", "\\b", "\\t", "\\n", "\\v", "\\f", "\\r"};
-    char    str[MAX_STRING_PEEK];
+    char    str[MAX_STRING_PEEK] = {0};
 
     if (size)
         size = (size > 32 ? 32 : size + (sizeof(long) - size % sizeof(long)));
@@ -20,13 +20,11 @@ void    print_string(pid_t pid, unsigned long addr, int is_filename, size_t size
             else if (isprint(str[i]))
                 printf("%c", str[i]);
             else
-                printf("%d\\%o", str[i], str[i]);
+                printf("\\%o", (unsigned char)str[i]);
         }
     printf("\"");
 
-    // printf((is_filename ? "\"%s\"" : "\"%.32s\""), str);
-
-    if (size || (!is_filename && strlen(str) > 32))
+    if (size == 32 || (!is_filename && strlen(str) > 32))
         printf("...");
 }
 
@@ -66,7 +64,7 @@ void    convert_and_print_arg(pid_t pid, t_syscall_data syscall, int arg_index)
         case ULONG:
             printf("%lu", (unsigned long)arg); break;
         case ADDR:
-            printf("%p", (void *)arg); break;
+            printf((!arg ? "NULL" : "%p"), (void *)arg); break;
         case FILENAME:
             print_string(pid, (unsigned long)arg, 1, 0); break;
         case STRING:
