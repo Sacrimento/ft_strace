@@ -16,7 +16,7 @@ t_syscall_info get_syscall_info(int id)
         {"mmap", 6, {ADDR, ULONG, INT, INT, INT, ULONG}, ADDR},
         {"mprotect", 3, {ULONG, ULONG, ULONG}, LONG},
         {"munmap", 2, {ULONG, ULONG}, LONG},
-        {"brk", 1, {ULONG}, ADDR},
+        {"brk", 1, {ADDR}, ADDR},
         {"rt_sigaction", 4, {INT, ADDR, ADDR, ULONG}, LONG},
         {"rt_sigprocmask", 4, {INT, ADDR, ADDR, ULONG}, LONG},
         {"rt_sigreturn", 1, {ULONG}, LONG},

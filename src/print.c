@@ -101,9 +101,17 @@ void    print_syscall_data(pid_t pid, t_syscall_data syscall)
     written += printf(")");
     while (++written < 40)
         putchar(' ');
-}
+}  
 
-void    print_syscall_ret(long ret)
+void    print_syscall_ret(long ret, t_arg_type ret_type)
 {
-    printf(" = %ld\n", ret);
+    if (ret_type == LONG)
+        printf(" = %ld", ret);
+    else
+        printf(" = %p", (void*)ret);
+    
+    if (ret < 0)
+        printf(" %s (%s)", get_errno_str(-ret), strerror(-ret));
+
+    putchar('\n');
 }

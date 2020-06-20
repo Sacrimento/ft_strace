@@ -11,7 +11,8 @@ HEADERS		=	get_data.h \
 				print.h \
 				syscall.h \
 				trace.h \
-				resolve_path.h
+				resolve_path.h \
+				errno_str.h
 
 SRC			=	ft_strace.c \
 				trace.c \
@@ -19,7 +20,8 @@ SRC			=	ft_strace.c \
 				print.c \
 				syscall.c \
 				get_data.c \
-				resolve_path.c
+				resolve_path.c \
+				errno.c
 
 INC_PATH 	= 	$(addprefix $(DIR_INC), $(HEADERS))
 
