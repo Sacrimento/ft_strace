@@ -11,7 +11,7 @@ t_stop_type get_next_sigstop(pid_t pid, int *status)
             return SYSCALL;
         return SIGNAL;
     }
-    if (WIFEXITED(*status))
+    if (WIFEXITED(*status) || WIFSIGNALED(*status))
         return EXITED;
 }
 
@@ -31,7 +31,20 @@ void    handle_syscall(pid_t pid, int *in_syscall)
         print_syscall_ret(get_syscall_ret(pid), ret_type);
 }
 
-int trace_child(t_opts *opts, pid_t pid)
+void    handle_signal(pid_t pid, int in_syscall)
+{
+    siginfo_t   signal;
+
+    if (in_syscall)
+        printf(" = ?\n");
+
+    ptrace(PTRACE_GETSIGINFO, pid, 0, &signal);
+    print_signal(signal);
+
+    // handle special signals : sigstop / sigcont
+}
+
+int     trace_child(t_opts *opts, pid_t pid)
 {
     int         status;
     static int  in_syscall = 0;
@@ -46,11 +59,11 @@ int trace_child(t_opts *opts, pid_t pid)
         if (sigstop == SYSCALL)
             handle_syscall(pid, &in_syscall);
         else if (sigstop == SIGNAL)
-            printf("SIGNAL\n");
-        else
-        {
-            printf("EXITED\n");
+            handle_signal(pid, in_syscall);
+        else // PROCESS ENDED
             break;
-        }
     }
+
+    print_exit(status);
+    return WEXITSTATUS(status);
 }

@@ -1,7 +1,14 @@
+bugs:
+ret_value sometime (ENOENT != -2)
+env_var number
+
+non exec files 
+free
+
 SYSCALL
-Escape chars
-return values in correct fmt
-errno ret
+Escape chars (wrong_data)
 
 SIGNAL
-everything
+sigprocmask
+ignore our traps ?
+sigstop / sigcont ?

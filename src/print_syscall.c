@@ -3,29 +3,29 @@
 int     print_string(pid_t pid, unsigned long addr, int is_filename, size_t size)
 {
     static char *non_printable[7] = {"\\a", "\\b", "\\t", "\\n", "\\v", "\\f", "\\r"};
-    char    str[MAX_STRING_PEEK] = {0};
+    char    buf[MAX_STRING_PEEK] = {0};
     int     written = 0;
 
     if (size)
         size = (size > 32 ? 32 : size + (sizeof(long) - size % sizeof(long)));
-    get_string(pid, addr, str, size);
+    get_string(pid, addr, buf, size);
 
     written += printf("\"");
     if (is_filename)
-        written += printf("%s", str);
+        written += printf("%s", buf);
     else
-        for (int i = 0; (!size && i < MAX_STRING_SIZE && str[i] != 0) || (size && i < size); ++i)
+        for (int i = 0; (!size && i < 32 && buf[i] != 0) || (size && i < size); ++i)
         {
-            if (str[i] > 6 && str[i] < 14)
-                written += printf("%s", non_printable[str[i] - 7]);
-            else if (isprint(str[i]))
-                written += printf("%c", str[i]);
+            if (buf[i] > 6 && buf[i] < 14)
+                written += printf("%s", non_printable[buf[i] - 7]);
+            else if (isprint(buf[i]))
+                written += printf("%c", buf[i]);
             else
-                written += printf("\\%o", (unsigned char)str[i]);
+                written += printf("\\%o", (unsigned char)buf[i]);
         }
     written += printf("\"");
 
-    if (size == 32 || (!is_filename && strlen(str) > 32))
+    if (size == 32 || (!is_filename && strlen(buf) > 32))
         written += printf("...");
     return written;
 }
@@ -97,11 +97,11 @@ void    print_syscall_data(pid_t pid, t_syscall_data syscall)
         if (i + 1 < syscall.info.argc)
             written += printf(", ");
     }
-
+    fflush(stdout);
     written += printf(")");
     while (++written < 40)
         putchar(' ');
-}  
+}
 
 void    print_syscall_ret(long ret, t_arg_type ret_type)
 {

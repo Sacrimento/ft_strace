@@ -8,10 +8,12 @@
 #include <sys/syscall.h>
 #include <sys/user.h>
 #include <sys/reg.h>
+#include <signal.h>
 
 #include "opt_parser.h"
 #include "get_data.h"
 #include "print.h"
+#include "signal_.h"
 
 #define SYSCALL_BIT 0x80
 
