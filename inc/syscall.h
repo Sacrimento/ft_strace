@@ -21,6 +21,7 @@ typedef struct  s_syscall_info
     char        *name;
     int         argc;
     t_arg_type  arg_types[6];
+    int         interrupt;
     t_arg_type  ret_type;
 }               t_syscall_info;
 

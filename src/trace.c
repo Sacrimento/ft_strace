@@ -15,7 +15,7 @@ t_stop_type get_next_sigstop(pid_t pid, int *status)
         return EXITED;
 }
 
-void    handle_syscall(pid_t pid, int *in_syscall)
+int     handle_syscall(pid_t pid, int *in_syscall, int written)
 {
     static t_syscall_data      syscall;
 
@@ -23,15 +23,12 @@ void    handle_syscall(pid_t pid, int *in_syscall)
     if (*in_syscall)
     {
         syscall = get_syscall_data(pid);
-        // if (strcmp(syscall.info.name, "read"))
-            print_syscall_data(pid, syscall);
+        return print_syscall_data(pid, syscall, 0);
     }
-    else
-    {
-        // if (!strcmp(syscall.info.name, "read"))
-        //     print_syscall_data(pid, syscall);
-        print_syscall_ret(get_syscall_ret(pid), syscall.info.ret_type);
-    }
+    if (syscall.info.interrupt != -1)
+        print_syscall_data(pid, syscall, written);
+    print_syscall_ret(get_syscall_ret(pid), syscall.info.ret_type);
+    return 0;
 }
 
 void    handle_signal(pid_t pid, int in_syscall)
@@ -49,7 +46,7 @@ void    handle_signal(pid_t pid, int in_syscall)
 
 int     trace_child(t_opts *opts, pid_t pid)
 {
-    int         status;
+    int         status, interrupted;
     static int  in_syscall = 0;
     t_stop_type sigstop;
 
@@ -60,7 +57,7 @@ int     trace_child(t_opts *opts, pid_t pid)
     {
         sigstop = get_next_sigstop(pid, &status);
         if (sigstop == SYSCALL)
-            handle_syscall(pid, &in_syscall);
+            interrupted = handle_syscall(pid, &in_syscall, interrupted);
         else if (sigstop == SIGNAL)
             handle_signal(pid, in_syscall);
         else // PROCESS ENDED

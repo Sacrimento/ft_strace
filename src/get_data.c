@@ -1,12 +1,5 @@
 #include "get_data.h"
 
-long swap_int64(long val )
-{
-    val = ((val << 8) & 0xFF00FF00FF00FF00ULL ) | ((val >> 8) & 0x00FF00FF00FF00FFULL );
-    val = ((val << 16) & 0xFFFF0000FFFF0000ULL ) | ((val >> 16) & 0x0000FFFF0000FFFFULL );
-    return (val << 32) | ((val >> 32) & 0xFFFFFFFFULL);
-}
-
 void    get_string(pid_t pid, unsigned long addr, char *buffer, size_t size)
 {
     long    ret;

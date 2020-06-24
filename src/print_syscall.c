@@ -6,9 +6,6 @@ int     print_string(pid_t pid, unsigned long addr, int is_filename, size_t size
     char    buf[MAX_STRING_PEEK] = {0};
     int     written = 0;
 
-    // printf("%p", addr);
-    // return;
-
     if (size)
         size = (size > 32 ? 32 : size);
     get_string(pid, addr, buf, size);
@@ -88,22 +85,26 @@ int     convert_and_print_arg(pid_t pid, t_syscall_data syscall, int arg_index)
     return written;
 }
 
-void    print_syscall_data(pid_t pid, t_syscall_data syscall)
+int     print_syscall_data(pid_t pid, t_syscall_data syscall, int last_written)
 {
-    int     written = 0;
+    int     written = last_written;
 
-    written += printf("%s(", syscall.info.name);
+    if (!last_written)
+        written += printf("%s(", syscall.info.name);
 
-    for (int i = 0; i < syscall.info.argc; i++)
+    for (int i = (!last_written ? 0 : syscall.info.interrupt); i < syscall.info.argc; i++)
     {
+        if (i == syscall.info.interrupt && !last_written)
+            return written;
         written += convert_and_print_arg(pid, syscall, i);
         if (i + 1 < syscall.info.argc)
             written += printf(", ");
+        fflush(stdout);
     }
-    fflush(stdout);
     written += printf(")");
     while (++written < 40)
         putchar(' ');
+    return 0;
 }
 
 void    print_syscall_ret(long ret, t_arg_type ret_type)

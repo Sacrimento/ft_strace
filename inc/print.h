@@ -9,7 +9,7 @@ typedef enum arg_type t_arg_type;
 #include "get_data.h"
 #include "errno_str.h"
 
-void    print_syscall_data(pid_t pid, t_syscall_data syscall);
+int     print_syscall_data(pid_t pid, t_syscall_data syscall, int last_written);
 void    print_syscall_ret(long ret, t_arg_type ret_type);
 
 #endif
