@@ -5,7 +5,7 @@ t_syscall_info get_syscall_info(int id)
     static const t_syscall_info  syscalls_infos[] =
     {
         {"read", 3, {UINT, SIZED_STRING, ULONG}, LONG},
-        {"write", 3, {UINT, STRING, ULONG}, LONG},
+        {"write", 3, {UINT, SIZED_STRING, ULONG}, LONG},
         {"open", 3, {FILENAME, INT, INT}, LONG},
         {"close", 1, {UINT}, LONG},
         {"stat", 2, {FILENAME, ADDR}, LONG},

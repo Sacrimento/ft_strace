@@ -6,8 +6,11 @@ int     print_string(pid_t pid, unsigned long addr, int is_filename, size_t size
     char    buf[MAX_STRING_PEEK] = {0};
     int     written = 0;
 
+    // printf("%p", addr);
+    // return;
+
     if (size)
-        size = (size > 32 ? 32 : size + (sizeof(long) - size % sizeof(long)));
+        size = (size > 32 ? 32 : size);
     get_string(pid, addr, buf, size);
 
     written += printf("\"");

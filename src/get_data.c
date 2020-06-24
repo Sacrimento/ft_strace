@@ -1,18 +1,27 @@
 #include "get_data.h"
 
+long swap_int64(long val )
+{
+    val = ((val << 8) & 0xFF00FF00FF00FF00ULL ) | ((val >> 8) & 0x00FF00FF00FF00FFULL );
+    val = ((val << 16) & 0xFFFF0000FFFF0000ULL ) | ((val >> 16) & 0x0000FFFF0000FFFFULL );
+    return (val << 32) | ((val >> 32) & 0xFFFFFFFFULL);
+}
+
 void    get_string(pid_t pid, unsigned long addr, char *buffer, size_t size)
 {
     long    ret;
     int     i = 0;
 
-    while ((size && i < size) || (!size && i < MAX_STRING_PEEK - 1))
+    while ((size && i < size) || (!size && i < MAX_STRING_PEEK - sizeof(long) - 1))
     {
-        ret = ptrace(PTRACE_PEEKDATA, pid, (void*)(addr + i), NULL);
+        ret = ptrace(PTRACE_PEEKDATA, pid, addr + i, NULL);
         memcpy(buffer + i, &ret, sizeof(long));
         if (!size && memchr(&ret, 0, sizeof(long)))
             break;
         i += sizeof(long);
     }
+    if (size)
+        buffer[size] = 0;
 }
 
 int     get_array(pid_t pid, unsigned long addr, long *addr_array)

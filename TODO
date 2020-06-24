@@ -2,7 +2,8 @@ bugs:
 ret_value sometime (ENOENT != -2)
 env_var number
 
-non exec files 
+non exec files
+non existing files
 free
 
 SYSCALL

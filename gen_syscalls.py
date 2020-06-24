@@ -11,7 +11,10 @@ syscalls = [content[v+1:indeces[i+1]] for i,v in enumerate(indeces) if i+1 < len
 with open('./syscall', 'w') as f:
     out = ''
     for syscall in syscalls:
+        interrupt = -1
         for i,arg in enumerate(syscall[1:]):
+            if 'buf' in arg:
+                interrupt = i
             if 'unsigned int' in arg:
                 syscall[1+i] = 'UINT'
             elif 'int' in arg:
@@ -29,5 +32,5 @@ with open('./syscall', 'w') as f:
             else:
                 syscall[1+i] = 'ADDR'
             
-        out += '{"%s", %d, {%s}, LONG},\n' % (syscall[0][4:], len(syscall[1:]), ', '.join(syscall[1:]))
+        out += '{"%s", %d, {%s}, %d, LONG},\n' % (syscall[0][4:], len(syscall[1:]), ', '.join(syscall[1:]), interrupt)
     f.write(out)

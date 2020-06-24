@@ -17,18 +17,21 @@ t_stop_type get_next_sigstop(pid_t pid, int *status)
 
 void    handle_syscall(pid_t pid, int *in_syscall)
 {
-    t_syscall_data      syscall;
-    static t_arg_type   ret_type;
+    static t_syscall_data      syscall;
 
     *in_syscall ^= 1;
     if (*in_syscall)
     {
         syscall = get_syscall_data(pid);
-        ret_type = syscall.info.ret_type;
-        print_syscall_data(pid, syscall);
+        // if (strcmp(syscall.info.name, "read"))
+            print_syscall_data(pid, syscall);
     }
     else
-        print_syscall_ret(get_syscall_ret(pid), ret_type);
+    {
+        // if (!strcmp(syscall.info.name, "read"))
+        //     print_syscall_data(pid, syscall);
+        print_syscall_ret(get_syscall_ret(pid), syscall.info.ret_type);
+    }
 }
 
 void    handle_signal(pid_t pid, int in_syscall)
